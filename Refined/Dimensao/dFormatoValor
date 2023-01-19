@@ -1,0 +1,5 @@
+let
+    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlTSUXJMKs7PKS3JBzJBXKVYnWglIyDDNzMnI7EotRgkbmBgAKSywXLGULnDW+FyEGlfpdhYAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type text) meta [Serialized.Text = true]) in type table [CodFormato = _t, Visualizar = _t, Divisor = _t, VisualizarAbrev = _t]),
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodFormato", Int64.Type}, {"Divisor", Int64.Type}})
+in
+    TipoAlterado
