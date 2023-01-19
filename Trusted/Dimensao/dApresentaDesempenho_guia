@@ -1,0 +1,5 @@
+let
+    Fonte = DadosMestres_bd{[Item="dApresentaDesempenho",Kind="Table"]}[Data],
+    LinhasFiltradas = Table.SelectRows(Fonte, each List.Contains({"Custeio","Despesa", "Investimento","IFRS 16","EMAP SLB","Limbo","Passivo","Ociosidade"},[isApresentaDesempenho_pt]))
+in
+    LinhasFiltradas
