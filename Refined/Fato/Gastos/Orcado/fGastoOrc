@@ -1,0 +1,6 @@
+let
+    Fonte = WorkBook{[Name="fGastoOrc_guia"]}[Content],
+    GuiaNatureza = Table.AddColumn(Fonte, "Guia", each [BreakDown_GroupA_pt]),
+    Buffer = Table.Buffer(GuiaNatureza)
+in
+    Buffer
