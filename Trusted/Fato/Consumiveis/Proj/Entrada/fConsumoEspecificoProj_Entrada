@@ -1,0 +1,12 @@
+let
+    Fonte = WorkBook{[Name="fConsumoEspecifico"]}[Content],
+    Navegacao = Table.SelectColumns(Fonte,{"CodCentroCusto", "CodConta", "CodMaterial", "CodIndicador"} & _ListaColunas_MetricaMes),
+    Unpivot = Table.Unpivot(Navegacao, _ListaColunas_MetricaMes, "Atributo", "Valor"),
+    Int = Table.TransformColumnTypes(Unpivot,{{"CodIndicador", Int64.Type}}),
+    Mescla_dIndicador = Table.NestedJoin(Int, {"CodIndicador"}, dIndicador, {"CodIndicador"}, "dIndicador", JoinKind.LeftOuter),
+    Expandir_dIndicador = Table.ExpandTableColumn(Mescla_dIndicador, "dIndicador", {"IndicadorProducao"}, {"CodIndicador | Producao"}),
+    TipoAlterado = Table.TransformColumnTypes(Expandir_dIndicador,{{"CodIndicador", type text}, {"CodCentroCusto", type text}, {"CodConta", type text}, {"CodMaterial", type text}, {"Valor", type number}, {"CodIndicador | Producao", type text}}),
+    FiltroExecProj = Table.SelectRows(TipoAlterado, each Text.Contains([Atributo], "ExecProj")),
+    SomentePeriodo = Table.ReplaceValue(FiltroExecProj,"ExecProj_","",Replacer.ReplaceText,{"Atributo"})
+in
+    SomentePeriodo
