@@ -1,0 +1,7 @@
+let
+    _Responsabilidade = NomeSubSite[NomeSubSite],
+    Fonte = Excel.CurrentWorkbook(){[Name="dCentroCusto_Completa_guia"]}[Content],
+    LinhasFiltradas = Table.SelectRows(Fonte, each List.Contains(_Responsabilidade,[NomeSubSite]) and List.Contains(DescGerencia[DescGerencia],[DescGerencia_pt])),
+    Buffer = Table.Buffer(LinhasFiltradas)
+in
+    Buffer
