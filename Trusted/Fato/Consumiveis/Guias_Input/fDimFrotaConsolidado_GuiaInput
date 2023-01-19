@@ -1,0 +1,8 @@
+let
+    Fonte = Table.Combine({fDimFrotaOrc_GuiaInput, fDimFrotaExecProj_GuiaInput,fDimFrotaExec_GuiaInput}),
+    CodIndicador = Table.TransformColumnTypes(Fonte,{{"CodIndicador", type text}}),
+    Unpivot = Table.Unpivot(CodIndicador, _ListaColunas_MetricaMes, "Atributo", "Pivot"),
+    Pivot = Table.Pivot(Unpivot, List.Distinct(Unpivot[Atributo]), "Atributo", "Pivot", List.Sum),
+    Append = Table.Combine({Pivot, TabelaAppend})
+in
+    Append
