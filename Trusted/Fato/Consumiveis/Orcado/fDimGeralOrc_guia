@@ -1,0 +1,6 @@
+let
+    Fonte = fOrc_bd{[Item="fDriveMacro",Kind="Table"]}[Data],
+    Filtro = Table.SelectRows(Fonte, each List.Contains(NomeSubSite[CodSite],[CodSite]) and List.Contains(_ListaIndicadores,[CodIndicador])),
+    SelectColumns = Table.SelectColumns(Filtro,{"CodMetrica", "CodSite", "CodIndicador"} & _ListaColunasMeses)
+in
+    SelectColumns
