@@ -1,0 +1,8 @@
+let
+    Fonte = Excel.CurrentWorkbook(){[Name="NomeSubSite"]}[Content],
+    RemoverEmBranco = Table.SelectRows(Fonte, each [NomeSubSite] <> null and [NomeSubSite] <> ""),
+    DuplicatasRemovidas = Table.Distinct(RemoverEmBranco),
+    Buffer = Table.Buffer(DuplicatasRemovidas),
+    CodSite = Table.AddColumn(Buffer, "CodSite", each if [NomeSubSite] = "Salobo" then 10 else if [NomeSubSite] = "Sossego" then 20 else if [NomeSubSite] = "Onça Puma" then 30 else null)
+in
+    CodSite
