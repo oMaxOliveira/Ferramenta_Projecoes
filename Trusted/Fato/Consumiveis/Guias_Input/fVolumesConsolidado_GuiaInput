@@ -1,0 +1,28 @@
+let
+    Fonte = Table.Combine({fDimGeralConsolidado_GuiaInput, fDimFrotaConsolidado_GuiaInput}),
+    SelectColumn = Table.SelectColumns(Fonte,{"CodCentroCusto", "CodSite", "CodIndicador"} & _ListaColunas_MetricaMes),
+    RemoveNull = Table.SelectRows(SelectColumn, each [CodIndicador] <> null and [CodIndicador] <> ""),
+    PreparaMescla = Table.UnpivotOtherColumns(RemoveNull, {"CodCentroCusto", "CodSite", "CodIndicador"}, "Mescla", "Valor"),
+    Pivot = Table.Pivot(PreparaMescla, List.Distinct(PreparaMescla[CodIndicador]), "CodIndicador", "Valor", List.Sum),
+    MesclaCC = Table.NestedJoin(Pivot, {"CodCentroCusto"}, dCentroCusto, {"CodCentroCusto"}, "dCentroCusto", JoinKind.LeftOuter),
+    _1005 = Table.AddColumn(MesclaCC, "1005", each try [1011]/[1009] otherwise null),
+    _1004 = Table.AddColumn(_1005, "1004", each try [1009]/[1007] otherwise null),
+    _1035 = Table.AddColumn(_1004, "1035", each try [1016]/[1011] otherwise null),
+    _1034 = Table.AddColumn(_1035, "1034", each try [1014]/[1011] otherwise null),
+    _1036 = Table.AddColumn(_1034, "1036", each try [1015]/[1011] otherwise null),
+    _1033 = Table.AddColumn(_1036, "1033", each try [1017]/[1011] otherwise null),
+    _1032 = Table.AddColumn(_1033, "1032", each try [1025]/[1011] otherwise null),
+    _1030 = Table.AddColumn(_1032, "1030", each try [1007]/[1001] otherwise null),
+    _1031 = Table.ExpandTableColumn(_1030, "dCentroCusto", {"QtdPneuEquipamento"}, {"1031"}),
+    UnPivot = Table.UnpivotOtherColumns(_1031, {"CodCentroCusto", "CodSite", "Mescla"}, "CodIndicador", "Valor"),
+    Pivot_Meses = Table.Pivot(UnPivot, List.Distinct(UnPivot[Mescla]), "Mescla", "Valor", List.Sum),
+    Append = Table.Combine({Pivot_Meses, TabelaAppend}),
+    CodIndicador_int = Table.TransformColumnTypes(Append,{{"CodIndicador", Int64.Type}}),
+    dIndicador_Mescla = Table.NestedJoin(CodIndicador_int, {"CodIndicador"}, dIndicador, {"CodIndicador"}, "dIndicador", JoinKind.LeftOuter),
+    dIndicador_Expandido = Table.ExpandTableColumn(dIndicador_Mescla, "dIndicador", {"Fórmula de Cálculo"}, {"Fórmula de Cálculo"}),
+    Filtro_Input = Table.SelectRows(dIndicador_Expandido, each [Fórmula de Cálculo] = "Input"),
+    CodIndicador_txt = Table.TransformColumnTypes(Filtro_Input,{{"CodIndicador", type text}}),
+    Ordenacao = Table.SelectColumns(CodIndicador_txt,{"CodCentroCusto", "CodSite", "CodIndicador"} & _ListaColunas_MetricaMes),
+    RetirarVazias = Table.SelectRows(Ordenacao, each [CodIndicador] <> null and [CodIndicador] <> "")
+in
+    RetirarVazias
