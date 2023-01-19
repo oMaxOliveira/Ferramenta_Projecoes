@@ -1,0 +1,6 @@
+let
+    Fonte = DadosMestres_bd{[Item="ListaIndicadores_Gerencia",Kind="Table"]}[Data],
+    IndicadorNum = Table.TransformColumnTypes(Fonte,{{"CodIndicador", Int64.Type}}),
+    FiltrarResponsabilidade = Table.SelectRows(IndicadorNum, each List.Contains(NomeSubSite[NomeSubSite],[NomeSubSite]) and List.Contains(DescGerencia[DescGerencia],[DescGerencia_pt]))[CodIndicador]
+in
+    FiltrarResponsabilidade
