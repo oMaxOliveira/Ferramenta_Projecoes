@@ -1,0 +1,6 @@
+let
+    Fonte = WorkBook{[Name="dContrato_guia"]}[Content],
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodContrato", type text}, {"DataInicio", type date}, {"DataFim", type date}, {"CodServico", type text}, {"CodClasseServico", type text}, {"CodMacroClasseServico", type text}, {"CodFornecedor", type text}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
