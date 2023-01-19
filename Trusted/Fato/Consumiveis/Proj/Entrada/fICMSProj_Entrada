@@ -1,0 +1,13 @@
+let
+    Fonte = WorkBook{[Name="fICMSPercent"]}[Content],
+    Navegacao = Table.SelectColumns(Fonte,{"CodConta", "CodMaterial", "CodIndicador"} & _ListaColunas_MetricaMes),
+    Unpivot = Table.Unpivot(Navegacao, _ListaColunas_MetricaMes, "Atributo", "Valor"),
+    TipoAlterado = Table.TransformColumnTypes(Unpivot,{{"CodIndicador", type text}, {"CodConta", type text}, {"CodMaterial", type text}, {"Valor", type number}}),
+    FiltroExecProj = Table.SelectRows(TipoAlterado, each Text.Contains([Atributo], "ExecProj")),
+    SomentePeriodo = Table.ReplaceValue(FiltroExecProj,"ExecProj_","",Replacer.ReplaceText,{"Atributo"}),
+    MesclaCalculos = Table.NestedJoin(SomentePeriodo, {"CodIndicador"}, fCalculosConsumiveis, {"CodIndicador_Input"}, "fCalculosVolumes", JoinKind.LeftOuter),
+    ExpandirCalculos = Table.ExpandTableColumn(MesclaCalculos, "fCalculosVolumes", {"CodIndicador_Calculado", "Tipo", "Formula"}, {"CodIndicador_Calculado", "Tipo", "Formula"}),
+    DuplicatasRemovidas = Table.Distinct(ExpandirCalculos),
+    Filtro = Table.SelectRows(DuplicatasRemovidas, each [Tipo] = "ICMS")
+in
+    Filtro
