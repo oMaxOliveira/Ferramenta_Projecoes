@@ -1,0 +1,5 @@
+let
+    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlTSUQpILS7OT8xRitWJVjIC8n0TS1KLMqECxkCB4NSisszDy/OLwSImQBHXvNSi9MxEMN8UyPcvLSmCSpuBuGWpRRmpiSkKzvlFBflFiSWZZflKsbEA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type text) meta [Serialized.Text = true]) in type table [CodNatureza = _t, DescNatureza_pt = _t]),
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodNatureza", Int64.Type}, {"DescNatureza_pt", type text}})
+in
+    TipoAlterado
