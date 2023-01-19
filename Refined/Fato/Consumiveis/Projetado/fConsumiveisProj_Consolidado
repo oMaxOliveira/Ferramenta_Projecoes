@@ -1,0 +1,9 @@
+let
+    Fonte = Table.Combine({fDimGeralProj_Calculos, fDimFrotaProj_Calculos}),
+    Periodo = Table.RenameColumns(Fonte,{{"Atributo", "Periodo"}}),
+    CustoConsumo = Table.Combine({Periodo, fCustoConsumoProj}),
+    SelectColumn = Table.SelectColumns(CustoConsumo,{"CodCentroCusto", "CodConta", "CodMaterial", "CodIndicador", "Periodo", "Moeda", "Valor"}),
+    TipoAlterado = Table.TransformColumnTypes(SelectColumn,{{"Valor", type number}, {"CodIndicador", type text}}),
+    Pivot = Table.Pivot(TipoAlterado, List.Distinct(TipoAlterado[Periodo]), "Periodo", "Valor", List.Sum)
+in
+    Pivot
