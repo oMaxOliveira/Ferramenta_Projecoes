@@ -1,0 +1,6 @@
+let
+    Fonte = fGastoOrc,
+    ColunasRemovidas = Table.RemoveColumns(Fonte,{"CodMetrica"}),
+    RenomearMetrica = Table.RenameColumns(ColunasRemovidas,{{ParametrosGerais[Url]{4}&".01", "Orc_"&Ano&".01"}, {Ano&".02", "Orc_"&Ano&".02"}, {Ano&".03", "Orc_"&Ano&".03"}, {Ano&".04", "Orc_"&Ano&".04"}, {Ano&".05", "Orc_"&Ano&".05"}, {Ano&".06", "Orc_"&Ano&".06"}, {Ano&".07", "Orc_"&Ano&".07"}, {Ano&".08", "Orc_"&Ano&".08"}, {Ano&".09", "Orc_"&Ano&".09"}, {Ano&".10", "Orc_"&Ano&".10"}, {Ano&".11", "Orc_"&Ano&".11"}, {Ano&".12", "Orc_"&Ano&".12"}})
+in
+    RenomearMetrica
