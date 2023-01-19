@@ -1,0 +1,8 @@
+let
+    Fonte = fConsumoProj_Entrada,
+    SelectColumn = Table.SelectColumns(Fonte,{"CodCentroCusto", "CodConta", "CodMaterial", "Atributo"}),
+    PrecoMescla = Table.NestedJoin(SelectColumn, {"CodConta", "CodMaterial", "Atributo", "CodCentroCusto"}, fPrecoProj_Entrada, {"CodConta", "CodMaterial", "Atributo", "CodCentroCusto"}, "fPreco_Mescla", JoinKind.Inner),
+    PrecoExpandido = Table.ExpandTableColumn(PrecoMescla, "fPreco_Mescla", {"CodIndicador", "Valor"}, {"CodIndicador", "Valor"}),
+    DuplicatasRemovidas = Table.Distinct(PrecoExpandido)
+in
+    DuplicatasRemovidas
