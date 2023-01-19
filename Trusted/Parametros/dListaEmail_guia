@@ -1,0 +1,8 @@
+let
+    ClassificacaoGerencia = Table.Distinct(Table.SelectColumns(dCentroCusto_guia,{"ClassificacaoGerencia"}))[ClassificacaoGerencia],
+    Fonte = DadosMestres_bd{[Item="fEmailListaProjecao",Kind="Table"]}[Data],
+    LinhasFiltradas = Table.SelectRows(Fonte, each List.Contains(ClassificacaoGerencia,[Lista])),
+    LinhasClassificadas = Table.Sort(LinhasFiltradas,{{"Ordem", Order.Ascending}, {"Email", Order.Ascending}}),
+    SelectColumns = Table.SelectColumns(LinhasClassificadas,{"Email"})
+in
+    SelectColumns
