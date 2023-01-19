@@ -1,0 +1,6 @@
+let
+    Fonte = WorkBook{[Name="dApresentaDesempenho_guia"]}[Content],
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodApresentaDesempenho", Int64.Type}, {"isApresentaDesempenho_pt", type text}, {"isApresentaDesempenho_en", type text}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
