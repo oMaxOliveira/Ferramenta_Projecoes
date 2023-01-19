@@ -1,0 +1,5 @@
+let
+    Fonte = fDimFrotaProj_Calculos,
+    Pivot = Table.Pivot(Fonte, List.Distinct(Fonte[Atributo]), "Atributo", "Valor", List.Sum)
+in
+    Pivot
