@@ -1,0 +1,6 @@
+let
+    Fonte = fDimGeralConsolidado_GuiaInput,
+    PreparaMescla = Table.UnpivotOtherColumns(Fonte, {"Guia", "CodSite", "CodIndicador"}, "Mescla", "Valor"),
+    TipoAlterado = Table.TransformColumnTypes(PreparaMescla,{{"Valor", type number}})
+in
+    TipoAlterado
