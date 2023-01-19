@@ -1,0 +1,7 @@
+let
+    Fonte = WorkBook{[Name="fValidacaoGastos_guia"]}[Content],
+    ColunasRemovidas = Table.RemoveColumns(Fonte,{"NomeSubSite", "DescCentroCusto_pt", "DescConta_pt", "FixVar_pt", "BreakDown_GroupA_pt", "BreakDown_GroupB_pt", "BreakDown_GroupC_pt", "BreakDown_GroupD_pt", "Processo_pt", "SubProcesso_pt", "DescTipoManutencao_pt", "DescGrupoManutencao_pt", "isApresentaDesempenho_pt", "isContaApresentaDesempenho_pt"}),
+    TipoAlterado = Table.TransformColumnTypes(ColunasRemovidas,{{"ValorReais", type number}, {"ValorDolar", type number}, {"Periodo", type date}, {"DataLancamento", type date}, {"CodCentroCusto", type text}, {"CodConta", type text}, {"CodMaterial", type text}, {"CodContrato", type text}, {"CodTipoManutencao", type text}, {"Moeda", type text}, {"Preco", type number}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
