@@ -1,0 +1,6 @@
+let
+    Fonte = Excel.CurrentWorkbook(){[Name="ParametroProjeWeek_guia"]}[Content],
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"Periodo", type date}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
