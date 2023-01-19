@@ -1,0 +1,22 @@
+let
+    Fonte = Table.Combine({fConsumoEspecificoProj_Entrada, fConsumoEspecifico_DimFrota, fConsumoEspecifico_DimGeral}),
+    RemoverCodIndicadorProd = Table.RemoveColumns(Fonte,{"CodIndicador | Producao"}),
+    CalculosMescla = Table.NestedJoin(RemoverCodIndicadorProd, {"CodIndicador"}, fCalculosConsumiveis, {"CodIndicador_Input"}, "fCalculosVolumes", JoinKind.LeftOuter),
+    ExpandirCalculos = Table.ExpandTableColumn(CalculosMescla, "fCalculosVolumes", {"CodIndicador_Calculado", "Formula", "Tipo"}, {"CodIndicador_Calculado", "Formula", "Tipo"}),
+    _ColunasPivot = Table.AddColumn(
+Table.SelectColumns(
+ExpandirCalculos,{"CodCentroCusto","CodConta","CodMaterial", "CodIndicador_Calculado","CodIndicador", "Tipo", "Formula","Atributo"}), 
+"Contagem", each 1),
+    _Pivot = Table.Group(Table.SelectColumns(Table.Pivot(_ColunasPivot, List.Distinct(_ColunasPivot[Atributo]), "Atributo", "Contagem", List.Count),{"CodCentroCusto","CodMaterial","CodConta", "CodIndicador_Calculado", "Tipo", "Formula"}), {"CodCentroCusto","CodMaterial","CodConta", "CodIndicador_Calculado", "Tipo", "Formula"}, {{"QtdIndicadores", each Table.RowCount(_), Int64.Type}}),
+    _fCalculoConsumiveisAgrupado = Table.Group(Table.SelectColumns(fCalculosConsumiveis,{"CodIndicador_Calculado", "Tipo", "Formula"}), {"CodIndicador_Calculado", "Tipo", "Formula"}, {{"QtdIndicadores_Real", each Table.RowCount(_), Int64.Type}}),
+    _Mescla = Table.ExpandTableColumn(Table.NestedJoin(_Pivot, {"CodIndicador_Calculado"}, _fCalculoConsumiveisAgrupado, {"CodIndicador_Calculado"}, "_fCalculoConsumiveisAgrupado", JoinKind.LeftOuter), "_fCalculoConsumiveisAgrupado", {"QtdIndicadores_Real"}, {"QtdIndicadores_Real"}),
+    _ColunaValidacao = Table.SelectRows(Table.AddColumn(_Mescla, "Filtro", each if [QtdIndicadores] <> [QtdIndicadores_Real] then null else "Manter"), each [Filtro] <> null and [Filtro] <> ""),
+    MantendoNecessarias = Table.NestedJoin(ExpandirCalculos, {"CodCentroCusto","CodConta","CodMaterial", "CodIndicador_Calculado"}, _ColunaValidacao, {"CodCentroCusto","CodConta","CodMaterial", "CodIndicador_Calculado"}, "CopiarGuiasInput", JoinKind.Inner),
+    DuplicatasRemovidas = Table.Distinct(MantendoNecessarias),
+    Filtro = Table.SelectRows(DuplicatasRemovidas, each ([Formula] = "Multiplicação")),
+    Operador = Table.Group(Filtro, {"CodCentroCusto", "CodConta", "CodMaterial", "Atributo", "CodIndicador_Calculado"}, {{"Valor", each List.Product([Valor]), type number}}),
+    ColunasRenomeadas = Table.RenameColumns(Operador,{{"CodIndicador_Calculado", "CodIndicador"}}),
+    ConsumoEntrada = Table.Combine({ColunasRenomeadas, fConsumoProj_Entrada}),
+    ConsumoAbsoluto = Table.ReplaceValue(ConsumoEntrada,each [CodIndicador],"3008",Replacer.ReplaceText,{"CodIndicador"})
+in
+    ConsumoAbsoluto
