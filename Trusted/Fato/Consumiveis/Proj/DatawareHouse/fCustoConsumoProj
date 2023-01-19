@@ -1,0 +1,12 @@
+let
+    Fonte = Table.Combine({fICMSProj_Calculos, fCustoProj_Calculos,fConsumoAbsolutoProj_Calculos}),
+    ColunasRenomeadas = Table.RenameColumns(Fonte,{{"Atributo", "Periodo"}}),
+    CodMetrica = Table.AddColumn(ColunasRenomeadas, "CodMetrica", each 2),
+    ModOrigem = Table.AddColumn(CodMetrica, "ModOrigem", each "GastoAbsoluto"),
+    Mescla_Moeda = Table.NestedJoin(ModOrigem, {"CodCentroCusto", "CodConta", "CodMaterial", "Periodo"}, fPrecoProj_Entrada, {"CodCentroCusto", "CodConta", "CodMaterial", "Atributo"}, "fPrecoProj_Entrada", JoinKind.LeftOuter),
+    Expandir_Moeda = Table.ExpandTableColumn(Mescla_Moeda, "fPrecoProj_Entrada", {"Moeda"}, {"Moeda"}),
+    CodApresentaDesempenho = Table.AddColumn(Expandir_Moeda, "CodApresentaDesempenho", each 1),
+    TipoAlterado = Table.TransformColumnTypes(CodApresentaDesempenho,{{"CodIndicador", Int64.Type}}),
+    Guia = Table.AddColumn(TipoAlterado, "Guia", each "Consumíveis")
+in
+    Guia
