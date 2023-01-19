@@ -1,0 +1,6 @@
+let
+    Fonte = fConsumoConsolidado_GuiaInput,
+    PreparaMescla = Table.UnpivotOtherColumns(Fonte, {"CodCentroCusto", "CodConta", "CodIndicador", "CodMaterial", "CodIndicadorProducao","CodIndicadorEspecifico", "InputViaConsumo"}, "Mescla", "Valor"),
+    TipoAlterado = Table.TransformColumnTypes(PreparaMescla,{{"Valor", type number}})
+in
+    TipoAlterado
