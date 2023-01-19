@@ -1,0 +1,8 @@
+let
+    Fonte = fConsumoEspecificoProj_Entrada,
+    SelectColumn = Table.SelectColumns(Fonte,{"CodCentroCusto", "CodConta", "CodMaterial", "Atributo", "CodIndicador | Producao"}),
+    DimFrotaMescla = Table.NestedJoin(SelectColumn, {"CodCentroCusto", "Atributo", "CodIndicador | Producao"}, fDimFrotaProj_Calculos, {"CodCentroCusto", "Atributo", "CodIndicador"}, "fDimFrotaProj_Calculos", JoinKind.Inner),
+    DimFrotaExpandido = Table.ExpandTableColumn(DimFrotaMescla, "fDimFrotaProj_Calculos", {"Valor"}, {"Valor"}),
+    ColunasRenomeadas = Table.RenameColumns(DimFrotaExpandido,{{"CodIndicador | Producao", "CodIndicador"}})
+in
+    ColunasRenomeadas
