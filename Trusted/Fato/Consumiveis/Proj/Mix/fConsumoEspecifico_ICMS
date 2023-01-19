@@ -1,0 +1,8 @@
+let
+    Fonte = fConsumoEspecificoProj_Entrada,
+    SelectColumn = Table.SelectColumns(Fonte,{"CodCentroCusto", "CodConta", "CodMaterial", "Atributo"}),
+    DuplicatasRemovidas = Table.Distinct(SelectColumn),
+    Mescla = Table.NestedJoin(DuplicatasRemovidas, {"CodConta", "CodMaterial", "Atributo"}, fICMSProj_Entrada, {"CodConta", "CodMaterial", "Atributo"}, "fICMS_Mescla", JoinKind.Inner),
+    Expandido = Table.ExpandTableColumn(Mescla, "fICMS_Mescla", {"CodIndicador", "Valor"}, {"CodIndicador", "Valor"})
+in
+    Expandido
