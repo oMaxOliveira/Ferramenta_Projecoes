@@ -1,0 +1,21 @@
+let
+    AnoPeriodo = Date.Year(ParametroProjeWeek_guia[Periodo]{0}),
+    MesPeriodo = 
+        let 
+            MesPeriodo = Date.Month(ParametroProjeWeek_guia[Periodo]{0}),
+            Semana = ParametroProjeWeek_guia[Semana]{0},
+            Mes = if MesPeriodo = 1 or (MesPeriodo = 12 and Semana = 5) then MesPeriodo else MesPeriodo-1  
+        in Mes,
+    Fonte = Table.Combine({dCambio_bd{[Item="dCambioOrc",Kind="Table"]}[Data],dCambio_bd{[Item="dCambioFct",Kind="Table"]}[Data]}),
+    AnoInserido = Table.AddColumn(Fonte, "Ano", each Date.Year([Parametro]), Int64.Type),
+    MesInserido = Table.AddColumn(AnoInserido, "Mes", each Date.Month([Parametro]), Int64.Type),
+    LinhasFiltradas = Table.SelectRows(MesInserido, each ([Ano] = AnoPeriodo and [Mes] = MesPeriodo and [Metrica]="Executado") or ([Ano] = AnoPeriodo and [Metrica]="Orçado")),
+    UnPivotMeses = Table.Unpivot(LinhasFiltradas, {"Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"}, "Meses", "Valor"),
+    CombineColumns = Table.CombineColumns(Table.TransformColumnTypes(UnPivotMeses, {{"Ano", type text}}, "pt-BR"),{"Ano", "Meses"},Combiner.CombineTextByDelimiter(".", QuoteStyle.None),"Periodo"),
+    SelectColumns = Table.SelectColumns(CombineColumns,{"Metrica", "Periodo", "Valor"}),
+    PivotMetrica = Table.Pivot(SelectColumns, List.Distinct(SelectColumns[Metrica]), "Metrica", "Valor", List.Sum),
+    TipoAlterado = Table.TransformColumnTypes(PivotMetrica,{{"Periodo", type date}, {"Orçado", type number}, {"Executado", type number}}),
+    LinhasClassificadas = Table.Sort(TipoAlterado,{{"Periodo", Order.Ascending}}),
+    MesText = Table.AddColumn(LinhasClassificadas, "MesText", each Date.ToText([Periodo],"MM"))
+in
+    MesText
