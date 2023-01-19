@@ -1,0 +1,7 @@
+let
+    Fonte = WorkBook{[Name="fCurvaExecucao_guia"]}[Content],
+    RemoveColumn = Table.RemoveColumns(Fonte,{"DescGerencia_pt"}),
+    TipoAlterado = Table.TransformColumnTypes(RemoveColumn,{{"Valor", type number}, {"Dia", Int64.Type}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
