@@ -1,0 +1,4 @@
+let
+    Fonte = List.Buffer(List.Combine({List.Select(Table.ColumnNames(fGastoExec), each not Text.Contains(_, ".")), _ListaColunasMeses}))
+in
+    Fonte
