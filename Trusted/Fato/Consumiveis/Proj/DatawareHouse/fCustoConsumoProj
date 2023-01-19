@@ -7,6 +7,8 @@ let
     Expandir_Moeda = Table.ExpandTableColumn(Mescla_Moeda, "fPrecoProj_Entrada", {"Moeda"}, {"Moeda"}),
     CodApresentaDesempenho = Table.AddColumn(Expandir_Moeda, "CodApresentaDesempenho", each 1),
     TipoAlterado = Table.TransformColumnTypes(CodApresentaDesempenho,{{"CodIndicador", Int64.Type}}),
-    Guia = Table.AddColumn(TipoAlterado, "Guia", each "Consumíveis")
+    Guia = Table.AddColumn(TipoAlterado, "Guia", each "Consumíveis"),
+    _Carvao = Table.ReplaceValue(Guia,"99000462","52000462",Replacer.ReplaceText,{"CodMaterial"}),
+    DuplicatasRemovidas = Table.Distinct(_Carvao, {"CodCentroCusto", "CodConta", "CodMaterial", "Periodo", "CodIndicador", "Valor", "CodMetrica", "ModOrigem", "CodApresentaDesempenho", "Guia"})
 in
-    Guia
+    DuplicatasRemovidas
