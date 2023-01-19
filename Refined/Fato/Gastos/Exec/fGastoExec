@@ -1,0 +1,7 @@
+let
+    Fonte = WorkBook{[Name="fGastoExec_guia"]}[Content],
+    Filtros = Table.SelectRows(Fonte, each ([CodIndicador] <> "3008")),
+    GuiaNatureza = Table.AddColumn(Filtros, "Guia", each [BreakDown_GroupA_pt]),
+    Buffer = Table.Buffer(GuiaNatureza)
+in
+    Buffer
