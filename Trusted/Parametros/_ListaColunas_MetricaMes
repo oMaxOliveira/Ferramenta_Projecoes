@@ -1,0 +1,5 @@
+let
+    Fonte = TabelaAppend,
+    TransformarLista = Table.UnpivotOtherColumns(Fonte, {}, "Atributo", "Valor")[Atributo]
+in
+    TransformarLista
