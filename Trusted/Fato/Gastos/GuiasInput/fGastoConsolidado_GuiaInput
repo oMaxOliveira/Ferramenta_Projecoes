@@ -1,0 +1,9 @@
+let
+    Fonte = Table.Combine({fGastoOrc_GuiaInput, fGastoExecProj_GuiaInput,fGastoExec_GuiaInput}),
+    RemoverDepreciacao = Table.SelectRows(Fonte, each ([BreakDown_GroupA_pt] <> "Depreciação, Amortização e Exaustão")),
+    Unpivot = Table.Unpivot(RemoverDepreciacao, {"Orc_"&Ano&".01", "Orc_"&Ano&".02", "Orc_"&Ano&".03", "Orc_"&Ano&".04", "Orc_"&Ano&".05", "Orc_"&Ano&".06", "Orc_"&Ano&".07", "Orc_"&Ano&".08", "Orc_"&Ano&".09", "Orc_"&Ano&".10", "Orc_"&Ano&".11", "Orc_"&Ano&".12", "ExecProj_"&Ano&".01", "ExecProj_"&Ano&".02", "ExecProj_"&Ano&".03", "ExecProj_"&Ano&".04", "ExecProj_"&Ano&".05", "ExecProj_"&Ano&".06", "ExecProj_"&Ano&".07", "ExecProj_"&Ano&".08", "ExecProj_"&Ano&".09", "ExecProj_"&Ano&".10", "ExecProj_"&Ano&".11", "ExecProj_"&Ano&".12", "ExecutadoMes"}, "Atributo", "Pivot"),
+    Pivot = Table.Pivot(Unpivot, List.Distinct(Unpivot[Atributo]), "Atributo", "Pivot", List.Sum),
+    Append = Table.Combine({Pivot, TabelaAppend}),
+    Ordenacao = Table.SelectColumns(Append,{"BreakDown_GroupA_pt","CodCentroCusto", "CodConta", "CodContrato", "CodOrdemInterna",  "CodMaterial", "CodTipoManutencao", "Moeda"} & _ListaColunas_MetricaMes)
+in
+    Ordenacao
