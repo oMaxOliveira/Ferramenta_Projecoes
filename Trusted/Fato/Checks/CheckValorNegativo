@@ -1,0 +1,8 @@
+let
+    Fonte = WorkBook{[Name="CheckValorNegativo"]}[Content],
+    Unpivot = Table.UnpivotOtherColumns(Fonte, {"Guia"}, "Periodo", "Valor"),
+    Filtro = Table.SelectRows(Unpivot, each ([Valor] <> 0)),
+    Status = Table.AddColumn(Filtro, "Status", each "Valores Negativos em " & [Periodo]),
+    SelectColumn = Table.SelectColumns(Status,{"Guia", "Status"})
+in
+    SelectColumn
