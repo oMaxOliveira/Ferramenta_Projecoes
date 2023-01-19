@@ -1,0 +1,12 @@
+let
+    Fonte = Table.Combine({fConsumoOrc_GuiaInput, fConsumoExecProj_GuiaInput,fConsumoExec_GuiaInput}),
+    CodIndicador = Table.TransformColumnTypes(Fonte,{{"CodIndicador", type text}}),
+    Unpivot = Table.Unpivot(CodIndicador, _ListaColunas_MetricaMes, "Atributo", "Pivot"),
+    Pivot = Table.Pivot(Unpivot, List.Distinct(Unpivot[Atributo]), "Atributo", "Pivot", List.Sum),
+    Append = Table.Combine({Pivot, TabelaAppend}),
+    Ordenacao = Table.SelectColumns(Append,{"CodCentroCusto", "CodConta","CodMaterial",    "CodIndicador"} & _ListaColunas_MetricaMes),
+    RemoveNull = Table.SelectRows(Ordenacao, each [CodIndicador] <> null and [CodIndicador] <> ""),
+    Mescla = Table.NestedJoin(RemoveNull, {"CodCentroCusto", "CodConta", "CodMaterial"}, MesclaConsumiveis, {"CodCentroCusto", "CodConta", "CodMaterial"}, "MesclaConsumiveis", JoinKind.LeftOuter),
+    IndicadorProducao = Table.ExpandTableColumn(Mescla, "MesclaConsumiveis", {"CodIndicadorEspecifico", "CodIndicadorProducao", "InputViaConsumo"}, {"CodIndicadorEspecifico", "CodIndicadorProducao", "InputViaConsumo"})
+in
+    IndicadorProducao
