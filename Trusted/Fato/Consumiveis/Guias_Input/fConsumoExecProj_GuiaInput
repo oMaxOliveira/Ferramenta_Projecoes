@@ -1,0 +1,19 @@
+let
+    Fonte = fConsumoExecProj,
+    ColunasRemovidas = Table.RemoveColumns(Fonte,{"CodMetrica"}),
+    ColunasRenomeadas = Table.RenameColumns(ColunasRemovidas,{
+{Ano&".01", "ExecProj_"&Ano&".01"}, 
+{Ano&".02", "ExecProj_"&Ano&".02"}, 
+{Ano&".03", "ExecProj_"&Ano&".03"},
+{Ano&".04", "ExecProj_"&Ano&".04"},
+{Ano&".05", "ExecProj_"&Ano&".05"},
+{Ano&".06", "ExecProj_"&Ano&".06"},
+{Ano&".07", "ExecProj_"&Ano&".07"},
+{Ano&".08", "ExecProj_"&Ano&".08"},
+{Ano&".09", "ExecProj_"&Ano&".09"},
+{Ano&".10", "ExecProj_"&Ano&".10"},
+{Ano&".11", "ExecProj_"&Ano&".11"},
+{Ano&".12", "ExecProj_"&Ano&".12"}}),
+    TipoAlterado = Table.TransformColumnTypes(ColunasRenomeadas,{{"CodIndicador", type text}})
+in
+    TipoAlterado
