@@ -1,0 +1,6 @@
+let
+    Fonte = WorkBook{[Name="dCambio_guia"]}[Content],
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"Orçado", type number}, {"Executado", type number}, {"Periodo", type date}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
