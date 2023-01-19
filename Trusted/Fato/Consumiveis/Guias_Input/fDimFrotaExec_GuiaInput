@@ -1,0 +1,8 @@
+let
+    Fonte = fDimFrotaExec,
+    UnPivot = Table.Unpivot(Fonte, _ListaColunasMeses, "Periodo", "ExecutadoMes"),
+    _ParametroMes = FiltroMes_Exec[TituloColuna]{0},
+    LinhasFiltradas = Table.SelectRows(UnPivot, each [Periodo] = _ParametroMes),
+    SelectColumn = Table.SelectColumns(LinhasFiltradas,{"CodCentroCusto","CodSite", "CodIndicador", "Guia", "ExecutadoMes"})
+in
+    SelectColumn
