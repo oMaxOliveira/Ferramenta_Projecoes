@@ -1,0 +1,6 @@
+let
+    Fonte = Table.SelectColumns(dCambio,{"Periodo"}),
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"Periodo", type date}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
