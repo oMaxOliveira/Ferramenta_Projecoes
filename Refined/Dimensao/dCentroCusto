@@ -1,0 +1,6 @@
+let
+    Fonte = dCentroCusto_guia,
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodCentroCusto", type text}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
