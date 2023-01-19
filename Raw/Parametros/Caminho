@@ -1,0 +1,6 @@
+let
+    Rede = "\\cvrdcjssv01\dados\AREA\Cobre_Gestao_Economica_BMSA_Compartilhado\2021\",
+    SharedPoint = ParametrosGerais[Url]{5},
+    Fonte = if TipoOrigem = "Rede" then Rede else SharedPoint
+in
+    Fonte
