@@ -1,0 +1,4 @@
+let
+    Fonte = WorkBook{[Name="MesclaConsumiveis_guia"]}[Content]
+in
+    Fonte
