@@ -1,0 +1,9 @@
+let
+    Fonte = WorkBook{[Name="fPreco"]}[Content],
+    Navegacao = Table.SelectColumns(Fonte,{"CodCentroCusto", "CodConta", "CodMaterial", "CodIndicador","Moeda"} & _ListaColunas_MetricaMes),
+    Unpivot = Table.Unpivot(Navegacao, _ListaColunas_MetricaMes, "Atributo", "Valor"),
+    TipoAlterado = Table.TransformColumnTypes(Unpivot,{{"CodIndicador", type text}, {"CodCentroCusto", type text}, {"CodConta", type text}, {"CodMaterial", type text}, {"Valor", type number}}),
+    FiltroExecProj = Table.SelectRows(TipoAlterado, each Text.Contains([Atributo], "ExecProj")),
+    SomentePeriodo = Table.ReplaceValue(FiltroExecProj,"ExecProj_","",Replacer.ReplaceText,{"Atributo"})
+in
+    SomentePeriodo
