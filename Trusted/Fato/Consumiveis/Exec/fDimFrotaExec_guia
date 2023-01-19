@@ -1,0 +1,6 @@
+let
+    Fonte = fExec_bd{[Item="fDriveMicro",Kind="Table"]}[Data],
+    Filtro = Table.SelectRows(Fonte, each List.Contains(dCentroCusto_guia[CodCentroCusto],[CodCentroCusto])),
+    SelectColumns = Table.SelectColumns(Filtro,{"CodCentroCusto", "CodMetrica", "CodSite", "CodIndicador"} & _ListaColunasMeses)
+in
+    SelectColumns
