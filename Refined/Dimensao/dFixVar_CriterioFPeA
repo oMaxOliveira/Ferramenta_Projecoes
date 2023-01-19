@@ -1,0 +1,5 @@
+let
+    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlTSUXLLrMiHUKkpSrE60UpGQF5YYlHm4YVlqTlQdmJSTipY0hgo4JKam5hZrOCeWFySXwzk+5dkpBYVK8XGAgA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [CodFixVar_FPeA = _t, DescFixVar_FPeA_pt = _t, DescFixVar_FPeA_en = _t]),
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodFixVar_FPeA", Int64.Type}})
+in
+    TipoAlterado
