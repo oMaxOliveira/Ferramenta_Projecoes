@@ -1,0 +1,26 @@
+let
+    Fonte = fDimGeralProj_Entrada,
+    CodIndicador = Table.RenameColumns(Fonte,{{"CodIndicador_Calculado", "CodIndicador"}}),
+    CalculosMescla = Table.NestedJoin(CodIndicador, {"CodIndicador"}, fCalculosConsumiveis, {"CodIndicador_Input"}, "fCalculosVolumes", JoinKind.LeftOuter),
+    ExpandirCalculos = Table.ExpandTableColumn(CalculosMescla, "fCalculosVolumes", {"CodIndicador_Calculado", "Formula", "Tipo"}, {"CodIndicador_Calculado", "Formula", "Tipo"}),
+    _ColunasPivot = Table.AddColumn(
+Table.SelectColumns(
+ExpandirCalculos,{"CodIndicador_Calculado","CodIndicador", "Tipo", "Formula","CodSite","Atributo"}), 
+"Contagem", each 1),
+    _Pivot = Table.Group(Table.SelectColumns(Table.Pivot(_ColunasPivot, List.Distinct(_ColunasPivot[Atributo]), "Atributo", "Contagem", List.Count),{"CodSite","CodIndicador_Calculado", "Tipo", "Formula"}), {"CodSite","CodIndicador_Calculado", "Tipo", "Formula"}, {{"QtdIndicadores", each Table.RowCount(_), Int64.Type}}),
+    _fCalculoConsumiveisAgrupado = Table.Group(Table.SelectColumns(fCalculosConsumiveis,{"CodIndicador_Calculado", "Tipo", "Formula"}), {"CodIndicador_Calculado", "Tipo", "Formula"}, {{"QtdIndicadores_Real", each Table.RowCount(_), Int64.Type}}),
+    _Mescla = Table.ExpandTableColumn(Table.NestedJoin(_Pivot, {"CodIndicador_Calculado"}, _fCalculoConsumiveisAgrupado, {"CodIndicador_Calculado"}, "_fCalculoConsumiveisAgrupado", JoinKind.LeftOuter), "_fCalculoConsumiveisAgrupado", {"QtdIndicadores_Real"}, {"QtdIndicadores_Real"}),
+    _ColunaValidacao = Table.SelectRows(Table.AddColumn(_Mescla, "Filtro", each if [QtdIndicadores] <> [QtdIndicadores_Real] then null else "Manter"), each [Filtro] <> null and [Filtro] <> ""),
+    MantendoNecessarias = Table.NestedJoin(ExpandirCalculos, {"CodIndicador_Calculado"}, _ColunaValidacao, {"CodIndicador_Calculado"}, "CopiarGuiasInput", JoinKind.Inner),
+    ColunasRemovidas = Table.RemoveColumns(MantendoNecessarias,{"CodIndicador"}),
+    _TabelaMultiplicacao = Table.SelectRows(ColunasRemovidas, each ([Formula] = "Multiplicação")),
+    _OperadorMultiplicacao = Table.Group(_TabelaMultiplicacao, {"CodSite",  "Atributo", "CodIndicador_Calculado", "Formula"}, {{"Valor", each List.Product([Valor]), type number}}),
+    _TabelaSoma = Table.SelectRows(ColunasRemovidas, each ([Formula] = "Soma")),
+    _OperadorSoma = Table.Group(_TabelaSoma, {"CodSite",  "Atributo", "CodIndicador_Calculado", "Formula"}, {{"Valor", each List.Sum([Valor]), type number}}),
+    CombineTabelas = Table.Combine({_OperadorSoma, _OperadorMultiplicacao}),
+    ColunasRenomeadas = Table.RenameColumns(CombineTabelas,{{"CodIndicador_Calculado", "CodIndicador"}}),
+    SelectColumn = Table.SelectColumns(ColunasRenomeadas,{"CodSite", "CodIndicador", "Atributo",  "Valor"}),
+    _Append = Table.RenameColumns(fDimGeralProj_Entrada,{{"CodIndicador_Calculado", "CodIndicador"}}),
+    AppendEntradas = Table.Combine({SelectColumn, _Append})
+in
+    AppendEntradas
