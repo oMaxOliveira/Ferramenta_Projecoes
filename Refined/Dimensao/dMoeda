@@ -1,0 +1,5 @@
+let
+    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlTSUXIK8gGSYYk5+UWpxQqpuQpBqYmZxWhCKkqxOtFKRkDR0GAXVDmXw5tzEotQxUKDgRpiAQ==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type text) meta [Serialized.Text = true]) in type table [ID = _t, Moeda = _t, Titulo = _t, #"Título V2" = _t]),
+    Navegacao = Table.TransformColumnTypes(Fonte,{{"ID", Int64.Type}, {"Moeda", type text}, {"Titulo", type text}})
+in
+    Navegacao
