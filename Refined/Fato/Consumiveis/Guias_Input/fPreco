@@ -1,0 +1,4 @@
+let
+    Fonte = fPreco_Tratamento
+in
+    Fonte
