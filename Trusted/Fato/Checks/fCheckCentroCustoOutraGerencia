@@ -1,0 +1,12 @@
+let
+    Valor = Table.AddColumn(fGastoProj, "Valor", each 1),
+    CentroCustoDifNull = Table.SelectRows(Valor, each ([CodCentroCusto] = "1370082")),
+    dCentroCustoMescladas = Table.NestedJoin(CentroCustoDifNull, {"CodCentroCusto"}, dCentroCusto, {"CodCentroCusto"}, "dCentroCusto", JoinKind.LeftOuter),
+    dCentroCustoExpandido = Table.ExpandTableColumn(dCentroCustoMescladas, "dCentroCusto", {"TipoCentroCusto"}, {"TipoCentroCusto"}),
+    FiltroTipoE = Table.SelectRows(dCentroCustoExpandido, each ([TipoCentroCusto] = "E" and [BreakDown_GroupA_pt] = "Pessoal") or ([TipoCentroCusto] = null)),
+    Status = Table.AddColumn(FiltroTipoE, "Status", each if [TipoCentroCusto] = null then "Possui centro de custo de outra gerência" else [CodCentroCusto] & " Centro de Custo Tipo E"),
+    OutrasColunasRemovidas = Table.SelectColumns(Status,{"Guia", "Status", "Valor"}),
+    DuplicatasRemovidas = Table.Distinct(OutrasColunasRemovidas),
+    Buffer = Table.Buffer(DuplicatasRemovidas)
+in
+    Buffer
