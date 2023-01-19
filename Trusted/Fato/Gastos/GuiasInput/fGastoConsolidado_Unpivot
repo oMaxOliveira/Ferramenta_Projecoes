@@ -1,0 +1,5 @@
+let
+    Fonte = fGastoConsolidado_GuiaInput,
+    PreparaMescla = Table.UnpivotOtherColumns(Fonte, {"BreakDown_GroupA_pt", "CodCentroCusto", "CodConta", "CodContrato", "CodOrdemInterna", "CodMaterial", "CodTipoManutencao", "Moeda"}, "Mescla", "Valor")
+in
+    PreparaMescla
