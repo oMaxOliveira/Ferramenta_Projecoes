@@ -1,0 +1,15 @@
+let
+    Fonte = Table.RemoveColumns(fGastoHorizontal,{"BreakDown_GroupA_pt"}),
+    UnpivotMeses = Table.Unpivot(Fonte,_ListaColunasMeses, "Periodo", "Valor"),
+    Append_Consumiveis = Table.Combine({UnpivotMeses, fCustoConsumiveisProj}),
+    DifZero = Table.SelectRows(Append_Consumiveis, each ([Valor] <> 0)),
+    TipoAlteradoPeriodo = Table.TransformColumnTypes(DifZero,{{"Periodo", type date}, {"Valor", type number}}),
+    dCambioMescladas = Table.NestedJoin(TipoAlteradoPeriodo,{"Periodo"},dCambio,{"Periodo"},"dCambio",JoinKind.Inner),
+    dCambioExpandido = Table.ExpandTableColumn(dCambioMescladas, "dCambio", {"Orcado", "Executado"}, {"Orcado", "Executado"}),
+    ValorReais = Table.AddColumn(dCambioExpandido, "ValorReais", each if [Moeda] = "BRL" then [Valor] else [Valor] * (if [CodMetrica] = 1 then [Executado] else [Executado])),
+    ValorDolar = Table.AddColumn(ValorReais, "ValorDolar", each if [Moeda] = "USD" then [Valor] else [Valor] / (if [CodMetrica] = 1 then [Executado] else [Executado])),
+    MesExecProj = Table.AddColumn(ValorDolar, "MesExecProj", each ParametroProjeWeek[Periodo]{0}),
+    RemoveColunas = Table.RemoveColumns(MesExecProj,{"Valor","Orcado","Executado"}),
+    TipoAlteradoValor = Table.TransformColumnTypes(RemoveColunas,{{"ValorReais", type number}, {"ValorDolar", type number}, {"CodIndicador", Int64.Type}, {"CodMetrica", Int64.Type}, {"MesExecProj", type date}})
+in
+    TipoAlteradoValor
