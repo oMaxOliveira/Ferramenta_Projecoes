@@ -1,0 +1,5 @@
+let
+    Fonte = fEspecifico_Tratamento,
+    RemoveNull = Table.SelectRows(Fonte, each [CodCentroCusto] <> null and [CodCentroCusto] <> "")
+in
+    RemoveNull
