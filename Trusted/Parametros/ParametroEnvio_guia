@@ -1,0 +1,6 @@
+let
+    Fonte = Parametro_ExecProj_bd{[Item="ParametroEnvio",Kind="Table"]}[Data],
+    Mes = Table.AddColumn(Fonte, "Mes", each Date.Month([Periodo]), Int64.Type),
+    TipoAlterado = Table.TransformColumnTypes(Mes,{{"Periodo", type date}, {"Semana", type number}, {"Prazo de Envio", type datetime}})
+in
+    TipoAlterado
