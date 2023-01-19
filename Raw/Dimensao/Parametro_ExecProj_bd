@@ -1,0 +1,5 @@
+let
+    Arquivo = ParametrosGerais[Url]{6},
+    Fonte = Excel.Workbook(Web.Contents(Caminho & Arquivo), null, true)
+in
+    Fonte
