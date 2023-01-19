@@ -1,0 +1,5 @@
+let
+    Fonte = _ListaColunas_MetricaMes,
+    FiltroExecProj = List.FindText(Fonte,"ExecProj")
+in
+    FiltroExecProj
