@@ -1,0 +1,9 @@
+let
+    Fonte = ValidacaoGastos_bd{[Item="Validacao",Kind="Table"]}[Data],
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"Periodo", type date}, {"DataLancamento", type date}}),
+    LinhasFiltradas = Table.SelectRows(TipoAlterado, each List.Contains(dCentroCusto_guia[CodCentroCusto],[CodCentroCusto])),
+    ColunasRemovidas = Table.RemoveColumns(LinhasFiltradas,{"NomeSite", "GerenciaExecutiva_pt", "CodGerencia", "DescGerencia_pt", "TipoCentroCusto", "BloqueioCustosPrimarios", "Natureza_pt", "OperacaoManutencao_pt", "CodContaSecundariaIBS", "ContaSecundariaIBS_pt", "CodContaSecundariaSAP", "ContaSecundariaSAP_pt", "CodCostComponents", "CostComponents_pt"}),
+    Item = Table.AddColumn(ColunasRemovidas, "Item", each if [BreakDown_GroupA_pt] = "Serviços" then [DescFornecedor] else if [DescMaterial] <> null then [DescMaterial] else if [TextoPedido] <> null then [TextoPedido] else [Denomicacao])
+//    Item = Table.AddColumn(ColunasRemovidas, "Item", each if [CodContrato] <> null then [DescFornecedor] else if [TipoDocumento] = "M1" then "ICMS" else if [DescMaterial] <> null then [DescMaterial] else if [TextoPedido] <> null then [TextoPedido] else if [DescOrdem] <> null then [DescOrdem] else if [DescGrupoMercadoria] <> null then [DescGrupoMercadoria] else [Denomicacao])
+in
+    Item
