@@ -1,0 +1,6 @@
+let
+    Fonte = WorkBook{[Name="dOrdemInterna_guia"]}[Content],
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodOrdemInterna", type text}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
