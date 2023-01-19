@@ -1,0 +1,5 @@
+let
+    Fonte = Table.Combine({fGastoOrc,fGastoExec,fGastoProj}),
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodIndicador", Int64.Type}, {"CodMetrica", Int64.Type}, {"CodCentroCusto", type text}, {"CodConta", type text}, {"CodContrato", type text}, {"CodOrdemInterna", type text}, {"CodMaterial", type text}, {"CodTipoManutencao", type text}, {"Moeda", type text}})
+in
+    TipoAlterado
