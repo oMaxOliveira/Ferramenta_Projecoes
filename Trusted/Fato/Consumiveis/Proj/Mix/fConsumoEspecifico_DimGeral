@@ -1,0 +1,9 @@
+  let
+    Fonte = fConsumoEspecificoProj_Entrada,
+    SelectColumn = Table.SelectColumns(Fonte,{"CodCentroCusto", "CodConta", "CodMaterial", "Atributo", "CodIndicador | Producao"}),
+    DimGeralMescla = Table.NestedJoin(SelectColumn, {"CodIndicador | Producao", "Atributo"}, fDimGeralProj_Calculos, {"CodIndicador","Atributo"}, "fDimMicro_Mescla", JoinKind.Inner),
+    DimGeralExpandido = Table.ExpandTableColumn(DimGeralMescla, "fDimMicro_Mescla", {"Valor"}, {"Valor"}),
+    ColunasRenomeadas = Table.RenameColumns(DimGeralExpandido,{{"CodIndicador | Producao", "CodIndicador"}}),
+    DuplicatasRemovidas = Table.Distinct(ColunasRenomeadas)
+in
+    DuplicatasRemovidas
