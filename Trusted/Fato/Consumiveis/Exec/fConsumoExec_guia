@@ -1,0 +1,6 @@
+let
+    Fonte = fExec_bd{[Item="fConsumo",Kind="Table"]}[Data],
+    Filtro = Table.SelectRows(Fonte, each List.Contains(dCentroCusto_guia[CodCentroCusto],[CodCentroCusto])),
+    SelectColumns = Table.SelectColumns(Filtro,{"CodCentroCusto", "CodConta", "ModOrigem", "CodIndicador", "CodMaterial", "CodMetrica"} & _ListaColunasMeses)
+in
+    SelectColumns
