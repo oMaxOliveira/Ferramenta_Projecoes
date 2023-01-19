@@ -15,4 +15,4 @@ let
     CodIndicador = Table.RenameColumns(Append,{{"CodIndicadorEspecifico", "CodIndicador"}}),
     Ordenacao = Table.SelectColumns(CodIndicador,{"CodCentroCusto", "CodConta", "CodMaterial", "CodIndicador"} & _ListaColunas_MetricaMes)
 in
-    Ordenacao
+    Ordenaca
