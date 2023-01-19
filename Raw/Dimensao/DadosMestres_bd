@@ -1,0 +1,5 @@
+let
+    Fonte = Excel.Workbook(Web.Contents(Caminho & ParametrosGerais[Url]{7}), null, true),
+    Buffer = Table.Buffer(Fonte)
+in
+    Buffer
