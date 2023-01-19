@@ -1,0 +1,7 @@
+let
+    Fonte = fCurvaExecucao_bd{[Item="fCurvaExecucao",Kind="Table"]}[Data],
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"Dia", Int64.Type}}),
+    LinhasFiltradas = Table.SelectRows(TipoAlterado, each List.Contains(NomeSubSite[NomeSubSite],[NomeSubSite]) and List.Contains(DescGerencia[DescGerencia],[DescGerencia_pt]) and List.Contains(dApresentaDesempenho_guia[isApresentaDesempenho_pt],[isApresentaDesempenho_pt])),
+    LinhasClassificadas = Table.Sort(LinhasFiltradas,{{"NomeSubSite", Order.Ascending}, {"BreakDown_GroupA_pt", Order.Ascending}, {"isApresentaDesempenho_pt", Order.Ascending}, {"Dia", Order.Ascending}})
+in
+    LinhasClassificadas
