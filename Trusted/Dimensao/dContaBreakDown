@@ -1,0 +1,5 @@
+let
+    Fonte = DadosMestres_bd{[Item="dContaBreakDown",Kind="Table"]}[Data],
+    Buffer = Table.Buffer(Fonte)
+in
+    Buffer
