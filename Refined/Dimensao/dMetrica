@@ -1,0 +1,6 @@
+let
+    Fonte = WorkBook{[Name="dMetrica_guia"]}[Content],
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodMetrica", Int64.Type}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
