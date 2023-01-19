@@ -1,0 +1,6 @@
+let
+    Fonte = fConsumoConsolidado_GuiaInput,
+    InputViaConsumo_Sim = Table.SelectRows(Fonte, each [InputViaConsumo] = "Sim"),
+    ColunasRemovidas = Table.RemoveColumns(InputViaConsumo_Sim,{"CodIndicadorEspecifico", "CodIndicadorProducao", "InputViaConsumo"})
+in
+    ColunasRemovidas
