@@ -1,0 +1,7 @@
+let
+    _Mes = Text.From(ParametroProjeWeek_guia[Mes]{0}),
+    _Semana = Text.From(ParametroProjeWeek_guia[Semana]{0}),
+    Fonte = Excel.Workbook(Web.Contents(Caminho & ParametrosGerais[Url]{11} & ParametrosGerais[Url]{4} &"." & _Mes & "_" & _Semana & ".xlsx"), null, true),
+    Buffer = Table.Buffer(Fonte)
+in
+    Buffer
