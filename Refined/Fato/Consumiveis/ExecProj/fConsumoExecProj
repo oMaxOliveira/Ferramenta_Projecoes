@@ -1,0 +1,6 @@
+let
+    Fonte = WorkBook{[Name="fConsumoExecProj_guia"]}[Content],
+    Guia = Table.AddColumn(Fonte, "Guia", each "Consumíveis"),
+    Buffer = Table.Buffer(Guia)
+in
+    Buffer
