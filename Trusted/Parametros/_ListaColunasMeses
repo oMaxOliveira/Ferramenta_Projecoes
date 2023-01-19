@@ -1,0 +1,4 @@
+let
+    Fonte = List.Buffer(List.Transform(dCambio[Periodo], each Date.ToText(_,"yyyy.MM")))
+in
+    Fonte
