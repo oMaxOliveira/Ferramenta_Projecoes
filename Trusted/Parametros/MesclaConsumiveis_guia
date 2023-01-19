@@ -1,0 +1,5 @@
+let
+    Fonte = DadosMestres_bd{[Item="fListaConsumiveis",Kind="Table"]}[Data],
+    FiltroCCs = Table.SelectRows(Fonte, each List.Contains(dCentroCusto_guia[CodCentroCusto],[CodCentroCusto]))
+in
+    FiltroCCs
