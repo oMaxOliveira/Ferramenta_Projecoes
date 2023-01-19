@@ -1,0 +1,6 @@
+let
+    Fonte = WorkBook{[Name="dConta_guia"]}[Content],
+    TipoAlterado = Table.TransformColumnTypes(Fonte,{{"CodConta", type text}}),
+    Buffer = Table.Buffer(TipoAlterado)
+in
+    Buffer
