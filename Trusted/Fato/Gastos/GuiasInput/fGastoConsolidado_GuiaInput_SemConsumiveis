@@ -1,0 +1,6 @@
+let
+    Fonte = fGastoConsolidado_GuiaInput,
+    FiltrarConsumiveis = Table.NestedJoin(Fonte, {"CodCentroCusto", "CodConta", "CodMaterial"}, MesclaConsumiveis, {"CodCentroCusto", "CodConta", "CodMaterial"}, "MesclaConsumiveis", JoinKind.LeftAnti),
+    ColunasRemovidas = Table.RemoveColumns(FiltrarConsumiveis,{"MesclaConsumiveis"})
+in
+    ColunasRemovidas
