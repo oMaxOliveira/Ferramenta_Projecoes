@@ -1,0 +1,7 @@
+let
+    Consolidado = Table.Combine({fCheckDiversos,fCheckError,fCheckPessoalTipoE,fCheckCodContratoServicos,fCheckCentroCustoOutraGerencia,CheckValorNegativo}),
+    fSelectColumns = Table.SelectColumns(Consolidado,{"Guia","Status"}),
+    Gerencia = Table.AddColumn(fSelectColumns, "Gerencia", each DescGerencia[DescGerencia]{0}),
+    ColunasReordenadas = Table.ReorderColumns(Gerencia,{"Guia", "Gerencia", "Status"})
+in
+    ColunasReordenadas
