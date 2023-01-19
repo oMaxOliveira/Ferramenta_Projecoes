@@ -1,0 +1,13 @@
+let
+    Fonte = fProj_bd{[Item="fGasto",Kind="Table"]}[Data],
+    TipoGasto = Table.AddColumn(Fonte, "CodApresentaDesempenho", 
+    each if [CodCentroCustoApresentaDesempenho] = 1 
+    then if [CodContaApresentaDesempenho] = 1 then 1 
+    else [CodContaApresentaDesempenho] 
+    else [CodCentroCustoApresentaDesempenho]),
+    LinhasFiltradas = Table.SelectRows(TipoGasto, each List.Contains(dCentroCusto_guia[CodCentroCusto],[CodCentroCusto]) and List.Contains(dApresentaDesempenho[CodApresentaDesempenho],[CodApresentaDesempenho]) and [CodMetrica] = 4),
+    dContaBreakDown_guiaMescladas = Table.NestedJoin(LinhasFiltradas, {"CodBreakDown"}, dContaBreakDown, {"CodBreakDown"}, "ddContaBreakDown_guia", JoinKind.LeftOuter),
+    dContaBreakDown_guiaExpandido = Table.ExpandTableColumn(dContaBreakDown_guiaMescladas, "ddContaBreakDown_guia", {"BreakDown_GroupA_pt"}, {"BreakDown_GroupA_pt"}),
+    SelectColumns = Table.SelectColumns(dContaBreakDown_guiaExpandido,{"CodApresentaDesempenho", "BreakDown_GroupA_pt", "CodCentroCusto", "CodConta", "CodOrdemInterna", "ModOrigem", "CodIndicador", "CodMaterial", "CodContrato", "CodTipoManutencao", "CodMetrica", "Moeda"} & _ListaColunasMeses)
+in
+    SelectColumns
