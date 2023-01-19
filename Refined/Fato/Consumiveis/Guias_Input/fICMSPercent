@@ -1,0 +1,15 @@
+let
+    Fonte = Table.Combine({fConsumoEspecifico, fConsumoAbsoluto}),
+    GroupBy = Table.Group(
+Fonte,
+ {"CodConta", "CodMaterial"},
+List.Transform(
+_ListaColunas_MetricaMes,
+each {_,each 0}
+)
+),
+    CodIndicador = Table.AddColumn(GroupBy, "CodIndicador", each "3042"),
+    Ordenacao = Table.SelectColumns(CodIndicador,
+{"CodConta", "CodMaterial", "CodIndicador"} & _ListaColunas_MetricaMes)
+in
+    Ordenacao
