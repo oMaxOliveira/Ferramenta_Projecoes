@@ -1,0 +1,5 @@
+let
+    AnoPeriodo = dCambio_guia,
+    PeriodoText = Table.AddColumn(AnoPeriodo, "PeriodoText", each Date.ToText(DateTime.Date([Periodo]), "yyyy.MM"))
+in
+    PeriodoText
