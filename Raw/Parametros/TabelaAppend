@@ -1,0 +1,25 @@
+let
+    Inicio = Number.FromText(Ano),
+    Fim = Number.FromText(Ano),
+    //Declara uma data inicial
+    DataInicial = Date.StartOfYear(#date(Inicio, 1, 1)),
+    //Declara uma data final
+    DataFinal = Date.EndOfYear(#date(Fim, 12, 31)),
+    //Conta a quantidade de dias entre as duas datas
+    QtdeDias = Duration.Days(DataFinal-DataInicial)+1,
+    //Cria lista de datas
+    Datalist = List.Dates(DataInicial,QtdeDias,#duration(1,0,0,0)),
+    //Converter para Tabela
+    ConvertTabela = Table.FromList(Datalist, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    InicioMes = Table.TransformColumns(ConvertTabela,{{"Column1", Date.StartOfMonth, type date}}),
+    Duplicatas = Table.Distinct(InicioMes),
+    Orc = Table.AddColumn(Duplicatas, "Orc", each Date.ToText([Column1],"Orc_yyyy.MM"), Text.Type),
+    ExecProj = Table.AddColumn(Orc, "ExecProj", each Date.ToText([Column1],"ExecProj_yyyy.MM"), Text.Type),
+    Unpivot = Table.UnpivotOtherColumns(ExecProj, {"Column1"}, "Atributo", "Valor"),
+    LinhasClassificadas = Table.Sort(Unpivot,{{"Atributo", Order.Descending}, {"Valor", Order.Ascending}}),
+    ValorZero = Table.AddColumn(LinhasClassificadas, "Personalizar", each 0),
+    SelectColumn = Table.SelectColumns(ValorZero,{"Valor", "Personalizar"}),
+    Pivot = Table.Pivot(SelectColumn, List.Distinct(SelectColumn[Valor]), "Valor", "Personalizar", List.Sum),
+    ExecutadoMes = Table.AddColumn(Pivot, "ExecutadoMes", each 0)
+in
+    ExecutadoMes
