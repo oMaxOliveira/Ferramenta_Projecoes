@@ -1,0 +1,5 @@
+let
+    Fonte = fVolumesConsolidado_GuiaInput,
+    Classificar_Indicador = Table.Sort(Fonte,{{"CodIndicador", Order.Ascending}})
+in
+    Classificar_Indicador
