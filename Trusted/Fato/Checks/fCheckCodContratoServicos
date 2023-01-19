@@ -1,0 +1,21 @@
+let
+    fnTypeToText = (valueType as type) as number =>
+        if Type.Is(valueType, Text.Type) then
+            0
+        else if Type.Is(valueType, Number.Type) then
+            1
+        else
+            0,
+    Consolidado = Table.SelectColumns(fGastoProj,{"Guia", "ModOrigem", "CodIndicador", "BreakDown_GroupA_pt", "CodCentroCusto", "CodConta", "CodContrato", "Moeda"}),
+    GuiaServicos = Table.SelectRows(Consolidado, each ([Guia] = "Serviços")),
+    VazioParaNull = Table.ReplaceValue(GuiaServicos,"",null,Replacer.ReplaceValue,Table.ColumnNames(GuiaServicos)),
+    ValidaLinhaNull = Table.AddColumn(VazioParaNull, "ValidaLinhaNull", each if [CodCentroCusto] = null and [CodConta] = null and [Moeda] = null and [CodContrato] = null then 1 else 0),
+    FiltraLinhasValidas = Table.SelectRows(ValidaLinhaNull, each ([ValidaLinhaNull] = 0)),
+    CodContrato = Table.AddColumn(FiltraLinhasValidas, "CodContrato Inexistente", each if [CodContrato] = null or [CodContrato] = "" then 1 else 0),
+    ColunasRemovidas = Table.RemoveColumns(CodContrato,{"ModOrigem", "CodIndicador", "BreakDown_GroupA_pt", "CodCentroCusto", "CodConta", "CodContrato", "Moeda", "ValidaLinhaNull"}),
+    ColunasNãoDinâmicas = Table.UnpivotOtherColumns(ColunasRemovidas, {"Guia"}, "Status", "Valor"),
+    LinhasFiltradas = Table.SelectRows(ColunasNãoDinâmicas, each ([Valor] <> 0)),
+    DuplicatasRemovidas = Table.Distinct(LinhasFiltradas),
+    Buffer = Table.Buffer(DuplicatasRemovidas)
+in
+    Buffer
