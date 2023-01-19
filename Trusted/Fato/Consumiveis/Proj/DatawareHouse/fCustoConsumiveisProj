@@ -1,0 +1,5 @@
+let
+    Fonte = fCustoConsumoProj,
+    FiltroCusto = Table.SelectRows(Fonte, each ([CodIndicador] = 3012 or [CodIndicador] = 3013))
+in
+    FiltroCusto
