@@ -1,0 +1,7 @@
+let
+    Fonte = Excel.CurrentWorkbook(){[Name="DescGerencia"]}[Content],
+    RemoverEmBranco = Table.SelectRows(Fonte, each [DescGerencia] <> null and [DescGerencia] <> ""),
+    RemoverDuplicatas = Table.Distinct(RemoverEmBranco),
+    Buffer = Table.Buffer(RemoverDuplicatas)
+in
+    Buffer
