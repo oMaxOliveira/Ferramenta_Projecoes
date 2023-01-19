@@ -1,0 +1,6 @@
+let
+    Fonte = fGastoConsolidado_GuiaInput_SemConsumiveis,
+    FiltroNatureza = Table.SelectRows(Fonte, each ([BreakDown_GroupA_pt] = "Pessoal")),
+    ColunasRemovidas = Table.RemoveColumns(FiltroNatureza,{"BreakDown_GroupA_pt"})
+in
+    ColunasRemovidas
