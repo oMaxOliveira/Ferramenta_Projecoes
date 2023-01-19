@@ -1,0 +1,6 @@
+let
+    Fonte = fVolumesProj_Entrada,
+    Navegacao = Table.SelectRows(Fonte, each [TipoIndicador] = "DimensionamentoGeral"),
+    SelectColumn = Table.SelectColumns(Navegacao,{"CodSite", "CodIndicador_Calculado", "Atributo", "Valor"})
+in
+    SelectColumn
