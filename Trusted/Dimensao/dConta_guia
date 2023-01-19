@@ -1,0 +1,4 @@
+let
+    Fonte = DadosMestres_bd{[Item="dConta",Kind="Table"]}[Data]
+in
+    Fonte
