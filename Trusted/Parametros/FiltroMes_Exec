@@ -1,0 +1,5 @@
+let
+    Fonte = ParametroProjeWeek,
+    PersonalizaçãoAdicionada = Table.AddColumn(Fonte, "TituloColuna", each Date.ToText([Periodo],"yyyy.MM"))
+in
+    PersonalizaçãoAdicionada
