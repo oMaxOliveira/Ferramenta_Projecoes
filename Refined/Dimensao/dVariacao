@@ -1,0 +1,5 @@
+let
+    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlTSUXJMKoaQ+TmlJflKsTrRSkZAgYDUouTUvBIEqzQxRyk2FgA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type text) meta [Serialized.Text = true]) in type table [CodVariacao = _t, DescVariacaoAbrev = _t, DescVariacao = _t]),
+    Navegacao = Table.TransformColumnTypes(Fonte,{{"CodVariacao", Int64.Type}})
+in
+    Navegacao
