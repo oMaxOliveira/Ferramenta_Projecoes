@@ -1,0 +1,14 @@
+let
+    Status = Table.AddColumn(fGastoProj, "Status", each "Erros em input de Valor"),
+    Valor = Table.AddColumn(Status, "Valor", each 1),
+    _ErrosMantidos = Table.SelectRowsWithErrors(Valor),
+    ErrosRemovidos = Table.RemoveRowsWithErrors(Valor),
+    UnpivotMeses = Table.Unpivot(ErrosRemovidos, _ListaColunasMeses, "Atributo", "Valor.1"),
+    ValorParaDecimal = Table.TransformColumnTypes(UnpivotMeses,{{"Valor.1", type number}}),
+    ErrosMantidos = Table.SelectRowsWithErrors(ValorParaDecimal),
+    TableCombine = Table.Combine({_ErrosMantidos, ErrosMantidos}),
+    OutrasColunasRemovidas = Table.SelectColumns(TableCombine,{"Guia", "Status", "Valor"}),
+    DuplicatasRemovidas = Table.Distinct(OutrasColunasRemovidas),
+    Buffer = Table.Buffer(DuplicatasRemovidas)
+in
+    Buffer
