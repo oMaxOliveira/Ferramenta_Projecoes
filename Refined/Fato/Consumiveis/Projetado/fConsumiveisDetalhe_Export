@@ -1,0 +1,6 @@
+let
+    Fonte = fCustoConsumoProj,
+    Pivot = Table.Pivot(Fonte, List.Distinct(Fonte[Periodo]), "Periodo", "Valor", List.Sum),
+    ColunasRemovidas = Table.RemoveColumns(Pivot,{"CodApresentaDesempenho", "Guia"})
+in
+    ColunasRemovidas
