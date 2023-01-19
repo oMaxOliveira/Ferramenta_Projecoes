@@ -1,0 +1,32 @@
+let
+    fnTypeToText = (valueType as type) as number =>
+        if Type.Is(valueType, Text.Type) then
+            0
+        else if Type.Is(valueType, Number.Type) then
+            1
+        else
+            0,
+    Consolidado = Table.SelectColumns(fGastoProj,{"Guia", "ModOrigem", "CodIndicador", "BreakDown_GroupA_pt", "CodCentroCusto", "CodConta", "CodContrato", "CodMaterial", "Moeda"}),
+    VazioParaNull = Table.ReplaceValue(Consolidado,"",null,Replacer.ReplaceValue,Table.ColumnNames(Consolidado)),
+    ValidaLinhaNull = Table.AddColumn(VazioParaNull, "ValidaLinhaNull", each if [CodCentroCusto] = null and [CodConta] = null and [Moeda] = null then 1 else 0),
+    FiltraLinhasValidas = Table.SelectRows(ValidaLinhaNull, each ([ValidaLinhaNull] = 0)),
+    CodCentroCusto = Table.AddColumn(FiltraLinhasValidas, "CodCentroCusto Inexistente", each if [CodCentroCusto] = null or [CodCentroCusto] = "" then 1 else 0),
+    CodConta = Table.AddColumn(CodCentroCusto, "CodConta Inexistente", each if [CodConta] = null or [CodConta] = "" then 1 else 0),
+    Moeda = Table.AddColumn(CodConta, "Moeda Inconsistente",  each if not List.Contains({"BRL", "USD"}, [Moeda]) then 1 else 0),
+    ModOrigem = Table.AddColumn(Moeda, "ModOrigem Inconsistente", each if not List.Contains({"GastoAbsoluto","ListaTecnica","OverheadCorporativo"}, [ModOrigem]) then 1 else 0),
+    Indicador = Table.AddColumn(ModOrigem, "CodIndicador Inexistente", each if [CodIndicador] = null or [CodIndicador] = "" then 1 else 0),
+    NaturezaGuia = Table.AddColumn(Indicador, "Natureza da conta diferente da guia", each if [Guia] <> [BreakDown_GroupA_pt] and [Guia] <> "Consumíveis" then 1 else 0),
+    CodCentroCustoIsText = Table.AddColumn(NaturezaGuia, "CodCentroCusto Não está como Texto", each fnTypeToText(Value.Type([CodCentroCusto]))),
+    CodContaIsText = Table.AddColumn(CodCentroCustoIsText, "CodConta Não está como Texto", each fnTypeToText(Value.Type([CodConta]))),
+    CodContratoIsText = Table.AddColumn(CodContaIsText, "CodContrato Não está como Texto", each fnTypeToText(Value.Type([CodContrato]))),
+    CodCentroCustoInconsistente = Table.AddColumn(CodContratoIsText, "CodCentroCusto Inconsistente", each if Text.Length(Text.From([CodCentroCusto])) = 7 then 0 else 1),
+    CodContaInconsistente = Table.AddColumn(CodCentroCustoInconsistente, "CodConta Inconsistente", each if Text.Length(Text.From([CodConta])) = 10 then 0 else 1),
+    CodMaterialInconsistente = Table.AddColumn(CodContaInconsistente, "CodMaterial Inconsistente", each if [CodMaterial] = null or Text.Length(Text.From([CodMaterial])) = 8 then 0 else 1),
+    CodContratoInconsistente = Table.AddColumn(CodMaterialInconsistente, "CodContrato Inconsistente", each if [CodContrato] = null or Text.Length(Text.From([CodContrato])) = 10 or Text.StartsWith([CodContrato],"50") then 0 else 1),
+    ColunasRemovidas = Table.RemoveColumns(CodContratoInconsistente,{"ModOrigem", "CodIndicador", "BreakDown_GroupA_pt", "CodCentroCusto", "CodConta", "CodContrato", "CodMaterial", "Moeda", "ValidaLinhaNull"}),
+    ColunasNãoDinâmicas = Table.UnpivotOtherColumns(ColunasRemovidas, {"Guia"}, "Status", "Valor"),
+    LinhasFiltradas = Table.SelectRows(ColunasNãoDinâmicas, each ([Valor] <> 0)),
+    DuplicatasRemovidas = Table.Distinct(LinhasFiltradas),
+    Buffer = Table.Buffer(DuplicatasRemovidas)
+in
+    Buffer
