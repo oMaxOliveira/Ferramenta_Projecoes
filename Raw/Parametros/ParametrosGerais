@@ -1,0 +1,4 @@
+let
+    Fonte = Excel.CurrentWorkbook(){[Name="ParametrosGerais"]}[Content]
+in
+    Fonte
