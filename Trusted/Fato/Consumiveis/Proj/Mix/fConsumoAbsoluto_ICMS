@@ -1,0 +1,7 @@
+let
+    Fonte = fConsumoProj_Entrada,
+    SelectColumn = Table.SelectColumns(Fonte,{"CodCentroCusto", "CodConta", "CodMaterial", "Atributo"}),
+    Mescla = Table.NestedJoin(SelectColumn, {"CodConta", "CodMaterial", "Atributo"}, fICMSProj_Entrada, {"CodConta", "CodMaterial", "Atributo"}, "fICMS_Mescla", JoinKind.Inner),
+    Expandido = Table.ExpandTableColumn(Mescla, "fICMS_Mescla", {"CodIndicador", "Valor"}, {"CodIndicador", "Valor"})
+in
+    Expandido
